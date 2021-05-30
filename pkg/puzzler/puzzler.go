@@ -4,6 +4,8 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/katallaxie/puzzler/pkg/handler"
+
 	o "github.com/andersnormal/pkg/opts"
 	"github.com/andersnormal/pkg/server"
 )
@@ -20,7 +22,7 @@ func New(opts o.Opts) server.Listener {
 
 func (s *puzzler) Start(ctx context.Context, ready server.ReadyFunc) func() error {
 	return func() error {
-		http.HandleFunc("/", handler)
+		http.HandleFunc("/", handler.Handler)
 
 		if err := http.ListenAndServe(":12345", nil); err != nil {
 			return err
