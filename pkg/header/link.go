@@ -2,6 +2,9 @@ package header
 
 import (
 	"strings"
+
+	"golang.org/x/net/html"
+	"golang.org/x/net/html/atom"
 )
 
 // Link ...
@@ -13,6 +16,9 @@ type Link struct {
 
 // Header ...
 type Header string
+
+// ScriptNode ...
+type ScriptNode struct{}
 
 // Link ...
 func (s Header) Links() []Link {
@@ -76,6 +82,34 @@ func FilterByRel(links []Link, rel string) []Link {
 	}
 
 	return ll
+}
+
+// CreateNodes ...
+func CreateNodes(links []Link) []*html.Node {
+	nodes := make([]*html.Node, 0)
+
+	for _, s := range links {
+		attr := make([]html.Attribute, 0)
+		attr = append(attr, html.Attribute{Key: "src", Val: s.URL})
+
+		for k, p := range s.Params {
+			attr = append(attr, html.Attribute{Key: k, Val: p})
+		}
+
+		node := &html.Node{
+			Type: html.ElementNode,
+			Attr: attr,
+		}
+
+		if s.Rel == "script" {
+			node.Data = "script"
+			node.DataAtom = atom.Script
+		}
+
+		nodes = append(nodes, node)
+	}
+
+	return nodes
 }
 
 func parseParam(raw string) (key, val string) {

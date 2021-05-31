@@ -8,8 +8,6 @@ import (
 	"github.com/katallaxie/puzzler/pkg/header"
 
 	"github.com/PuerkitoBio/goquery"
-	"golang.org/x/net/html"
-	"golang.org/x/net/html/atom"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -61,31 +59,8 @@ func (r *resolver) WithContext(ctx context.Context, doc *goquery.Document) error
 			res.Header.Set("Link", "<https://unpkg.com/react-dom@17/umd/react-dom.development.js>; rel=\"script\"; crossorigin=\"\"\"")
 
 			l := header.Header(res.Header.Get("Link"))
-			ll := l.Links()
-
-			scripts := header.FilterByScript(ll...)
-			_ = header.FilterByStylesheet(ll...)
-
+			nodes := header.CreateNodes(l.Links())
 			head := doc.Find("head")
-			nodes := make([]*html.Node, 0)
-			for _, s := range scripts {
-				attr := make([]html.Attribute, 0)
-				attr = append(attr, html.Attribute{Key: "src", Val: s.URL})
-
-				for k, p := range s.Params {
-					attr = append(attr, html.Attribute{Key: k, Val: p})
-				}
-
-				node := &html.Node{
-					Type:     html.ElementNode,
-					Data:     "script",
-					DataAtom: atom.Script,
-					Attr:     attr,
-				}
-
-				nodes = append(nodes, node)
-			}
-
 			head.AppendNodes(nodes...)
 
 			b, err := ioutil.ReadAll(res.Body)
