@@ -19,6 +19,9 @@ A `fragment` is polymorphic. On the server it is parsed and evaluate to a `puzzl
 * `deferred` is deferring the fetch to the browser
 * `fallback` is deferring the fetch to the browser if failed (default)
 
+
+Fragments can use the HTTP [`Link`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Link) entity field to provide `rel=styleheet` or `rel=script` to a `puzzle`.
+
 ### Frontend
 
 This is when the fragment is deferred to the browser
